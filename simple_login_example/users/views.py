@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpRequest
+from django.utils.datastructures import MultiValueDictKeyError
 import json
 
 # def login(request : HttpRequest):
@@ -16,8 +17,15 @@ def login(request):
         }
 
         if(request.method == 'GET'):
-                username = request.GET['username']
-                password = request.GET['password']
+                username, password = None, None
+                try:
+                        username = request.GET['username']
+                        password = request.GET['password']
+                except MultiValueDictKeyError:
+                        if username is None:
+                                return HttpResponse('유저 아이디를 입력해주세요')
+                        if password is None:
+                                return HttpResponse('유저 비밀번호를 입력해주세요')        
 
                 if(username != user_data['username']):
                         return HttpResponse('유저 아이디가 올바르지 않습니다.')
@@ -26,3 +34,5 @@ def login(request):
                         return HttpResponse('유저 비밀번호가 올바르지 않습니다.')
                 
                 return HttpResponse('로그인 성공!!')
+
+        return HttpResponse()
