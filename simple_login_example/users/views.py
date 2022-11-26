@@ -1,4 +1,4 @@
-from django.shortcuts import render, request 
+from django.shortcuts import render, redirect
 from django.http import HttpResponse,HttpRequest
 from django.utils.datastructures import MultiValueDictKeyError
 import json
@@ -9,35 +9,39 @@ import json
 
 # def login_detail(request,id):
 #         return HttpResponse('user id는'+str(id)+'입니다.')
-context = {
-        'method': request.method, 
-        'is_valid': True
-
-}
 def login(request):
         user_data = {
                 'username': 'python',
                 'password': 'django'
         }
-        # if(request.method == 'GET'):
-                 # username = request.GET['username']
-                # password = request.GET['password']
+
+        context = {
+        'method': request.method, 
+        'is_valid': True
+        }
+
         if(request.method == 'GET'):
-                return render(request, 'user/login.html', context) 
+                return render(request, 'users/login.html', context) 
 
         if(request.method == 'POST'):
                 username = request.POST.get('username')
                 password = request.POST.get('password')
 
                 if username is '':
-                               context['is_valid'] = False
-                if password is 'None':
-                                context['is_valid'] = True
+                        context['is_valid'] = False
+                if password is '':
+                        context['is_valid'] = False
+
                 if(username != user_data['username']):
-                                context['is_valid'] = False
+                        context['is_valid'] = False
                 if(password != user_data['password']):
-                                context['is_valid'] = False
-                
-                return HttpResponse(request, 'users/login.html',context) #request, 'users/login.html'
+                        context['is_valid'] = False
+
+                if context['is_valid']:
+                        return redirect('pages:index')
+                return render(request, 'users/login.html', context) #request, 'users/login.html'
 
         return HttpResponse('로그인 성공!')
+
+def login_detail(request, id):
+        return HttpResponse('user id는'+str(id)+'입니다')
