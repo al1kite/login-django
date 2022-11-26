@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, request 
 from django.http import HttpResponse,HttpRequest
 from django.utils.datastructures import MultiValueDictKeyError
 import json
@@ -9,7 +9,11 @@ import json
 
 # def login_detail(request,id):
 #         return HttpResponse('user id는'+str(id)+'입니다.')
+context = {
+        'method': request.method, 
+        'is_valid': True
 
+}
 def login(request):
         user_data = {
                 'username': 'python',
@@ -19,26 +23,21 @@ def login(request):
                  # username = request.GET['username']
                 # password = request.GET['password']
         if(request.method == 'GET'):
-                username = request.GET.get('username')
-                password = request.GET.get('password')
-                # # try:
-                #         username = request.GET['username']
-                #         password = request.GET['password']
-                # except MultiValueDictKeyError:
-                #         if username is None:
-                #                 return HttpResponse('유저 아이디를 입력해주세요')
-                #         if password is None:
-                #             return HttpResponse('유저 비밀번호를 입력해주세요')        
-                if username is None:
-                                return HttpResponse('유저 아이디를 입력해주세요')
-                if password is None:
-                                return HttpResponse('유저 비밀번호를 입력해주세요')
+                return render(request, 'user/login.html', context) 
+
+        if(request.method == 'POST'):
+                username = request.POST.get('username')
+                password = request.POST.get('password')
+
+                if username is '':
+                               context['is_valid'] = False
+                if password is 'None':
+                                context['is_valid'] = True
                 if(username != user_data['username']):
-                        return HttpResponse('유저 아이디가 올바르지 않습니다.')
-
+                                context['is_valid'] = False
                 if(password != user_data['password']):
-                        return HttpResponse('유저 비밀번호가 올바르지 않습니다.')
+                                context['is_valid'] = False
                 
-                return render(request, 'users/login.html')
+                return HttpResponse(request, 'users/login.html',context) #request, 'users/login.html'
 
-        return HttpResponse()
+        return HttpResponse('로그인 성공!')
