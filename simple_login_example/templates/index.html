@@ -8,5 +8,9 @@
 </head>
 <body>
     <h1>hello world!</h1>
+    {% if is_login %}
+    <p> 유저 아이디는 {{username}} 이고</p>
+    <p> 비밀번호는 {{password}} 입니다</p>
+    {% endif %}
 </body>
 </html>
